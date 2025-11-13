@@ -26,7 +26,7 @@ const Recipes = () => {
   const fetchRecipes = async () => {
     try {
       const { data, error } = await supabase
-        .from("recipes")
+        .from("t_recipes")
         .select("*")
         .order("created_at", { ascending: false });
 

@@ -35,7 +35,7 @@ const Bars = () => {
     try {
       const [barsRes, qrRes] = await Promise.all([
         supabase.from("venue_bars").select("*, venues(name)").order("name"),
-        supabase.from("qr_codes").select("*, venue_bars(name)").order("table_number"),
+        supabase.from("t_qr_codes").select("*, venue_bars(name)").order("table_number"),
       ]);
 
       if (barsRes.error) throw barsRes.error;

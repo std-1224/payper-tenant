@@ -107,7 +107,7 @@ export type Database = {
         }
         Relationships: []
       }
-      qr_codes: {
+      t_qr_codes: {
         Row: {
           bar_id: string
           created_at: string
@@ -137,7 +137,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "qr_codes_bar_id_fkey"
+            foreignKeyName: "t_qr_codes_bar_id_fkey"
             columns: ["bar_id"]
             isOneToOne: false
             referencedRelation: "venue_bars"
@@ -175,12 +175,12 @@ export type Database = {
             foreignKeyName: "recipe_items_recipe_id_fkey"
             columns: ["recipe_id"]
             isOneToOne: false
-            referencedRelation: "recipes"
+            referencedRelation: "t_recipes"
             referencedColumns: ["id"]
           },
         ]
       }
-      recipes: {
+      t_recipes: {
         Row: {
           category: string
           created_at: string

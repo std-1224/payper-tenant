@@ -31,8 +31,8 @@ CREATE TABLE IF NOT EXISTS public.stock_items (
   updated_at timestamptz DEFAULT now()
 );
 
--- Create recipes table
-CREATE TABLE IF NOT EXISTS public.recipes (
+-- Create t_recipes table
+CREATE TABLE IF NOT EXISTS public.t_recipes (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   name text NOT NULL,
   category text NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS public.recipes (
 -- Create recipe_items table
 CREATE TABLE IF NOT EXISTS public.recipe_items (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  recipe_id uuid REFERENCES public.recipes(id) ON DELETE CASCADE NOT NULL,
+  recipe_id uuid REFERENCES public.t_recipes(id) ON DELETE CASCADE NOT NULL,
   ingredient_id uuid NOT NULL,
   ingredient_name text NOT NULL,
   percentage numeric NOT NULL DEFAULT 0,
@@ -117,8 +117,8 @@ CREATE TABLE IF NOT EXISTS public.system_alerts (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
--- Create qr_codes table for bars/tables
-CREATE TABLE IF NOT EXISTS public.qr_codes (
+-- Create t_qr_codes table for bars/tables
+CREATE TABLE IF NOT EXISTS public.t_qr_codes (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   bar_id uuid REFERENCES public.venue_bars(id) ON DELETE CASCADE NOT NULL,
   table_number text NOT NULL,
@@ -132,14 +132,14 @@ CREATE TABLE IF NOT EXISTS public.qr_codes (
 ALTER TABLE public.venues ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.venue_bars ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.stock_items ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.recipes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.t_recipes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.recipe_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.venue_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.staff ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.venue_orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.venue_cashflow ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.system_alerts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.qr_codes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.t_qr_codes ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policies for global admins
 CREATE POLICY "Global admins can manage all venues" ON public.venues
@@ -151,7 +151,7 @@ FOR ALL USING (is_global_admin());
 CREATE POLICY "Global admins can manage all stock_items" ON public.stock_items
 FOR ALL USING (is_global_admin());
 
-CREATE POLICY "Global admins can manage all recipes" ON public.recipes
+CREATE POLICY "Global admins can manage all t_recipes" ON public.t_recipes
 FOR ALL USING (is_global_admin());
 
 CREATE POLICY "Global admins can manage all recipe_items" ON public.recipe_items
@@ -172,7 +172,7 @@ FOR ALL USING (is_global_admin());
 CREATE POLICY "Global admins can manage all system_alerts" ON public.system_alerts
 FOR ALL USING (is_global_admin());
 
-CREATE POLICY "Global admins can manage all qr_codes" ON public.qr_codes
+CREATE POLICY "Global admins can manage all t_qr_codes" ON public.t_qr_codes
 FOR ALL USING (is_global_admin());
 
 -- Create indexes for better performance
@@ -186,7 +186,7 @@ CREATE INDEX idx_venue_orders_status ON public.venue_orders(status);
 CREATE INDEX idx_venue_cashflow_venue_id ON public.venue_cashflow(venue_id);
 CREATE INDEX idx_system_alerts_venue_id ON public.system_alerts(venue_id);
 CREATE INDEX idx_system_alerts_severity ON public.system_alerts(severity);
-CREATE INDEX idx_qr_codes_bar_id ON public.qr_codes(bar_id);
+CREATE INDEX idx_t_qr_codes_bar_id ON public.t_qr_codes(bar_id);
 
 -- Create triggers for updated_at
 CREATE TRIGGER update_venues_updated_at BEFORE UPDATE ON public.venues
@@ -198,7 +198,7 @@ FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_stock_items_updated_at BEFORE UPDATE ON public.stock_items
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
-CREATE TRIGGER update_recipes_updated_at BEFORE UPDATE ON public.recipes
+CREATE TRIGGER update_t_recipes_updated_at BEFORE UPDATE ON public.t_recipes
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 CREATE TRIGGER update_venue_users_updated_at BEFORE UPDATE ON public.venue_users

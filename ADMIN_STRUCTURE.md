@@ -117,7 +117,7 @@ Panel de administración multitenant para gestionar clientes, módulos y usuario
 
 **apps_registry**
 - Catálogo de módulos de Payper
-- Ej: ticketing, cashless_nfc, inventory_stock, recipes, etc.
+- Ej: ticketing, cashless_nfc, inventory_stock, t_recipes, etc.
 
 **tenant_users**
 - Usuarios administrativos por tenant

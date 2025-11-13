@@ -260,7 +260,7 @@ INSERT INTO public.apps_registry (key, name, description, is_core) VALUES
   ('tables_orders', 'QR Orders', 'Sistema de pedidos por QR y gestión de mesas', true),
   ('cashless_nfc', 'Cashless NFC', 'Sistema de pagos sin efectivo con NFC', false),
   ('inventory_stock', 'Stock & Inventario', 'Gestión de inventario y stock', false),
-  ('recipes', 'Recetas', 'Gestión de recetas y producción', false),
+  ('t_recipes', 'Recetas', 'Gestión de recetas y producción', false),
   ('pr_tokens', 'PR Tokens', 'Sistema de tokens para relaciones públicas', false),
   ('qr_analytics', 'QR Analytics', 'Analíticas de escaneos QR', false),
   ('guestlist_events', 'Guest List', 'Gestión de listas de invitados', false),
