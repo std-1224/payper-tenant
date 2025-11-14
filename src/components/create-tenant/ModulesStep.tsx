@@ -60,7 +60,7 @@ export const ModulesStep = ({ selectedModules, setSelectedModules }: ModulesStep
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Cargando módulos...</p>
+          <p className="text-muted-foreground">Loading modules...</p>
         </div>
       </div>
     );
@@ -72,9 +72,9 @@ export const ModulesStep = ({ selectedModules, setSelectedModules }: ModulesStep
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold mb-2">Módulos</h2>
+        <h2 className="text-2xl font-bold mb-2">Modules</h2>
         <p className="text-muted-foreground">
-          Selecciona los módulos de Payper que este comercio podrá usar
+          Select the Payper modules this tenant will be able to use
         </p>
       </div>
 
@@ -82,11 +82,11 @@ export const ModulesStep = ({ selectedModules, setSelectedModules }: ModulesStep
       {coreModules.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <h3 className="font-medium">Módulos Base</h3>
+            <h3 className="font-medium">Core Modules</h3>
             <Badge variant="default" className="text-xs">Core</Badge>
           </div>
           <p className="text-sm text-muted-foreground">
-            Módulos principales recomendados para todos los comercios
+            Essential modules recommended for all tenants
           </p>
           <div className="grid gap-3">
             {coreModules.map((module) => (
@@ -118,9 +118,9 @@ export const ModulesStep = ({ selectedModules, setSelectedModules }: ModulesStep
       {/* Optional Modules */}
       {optionalModules.length > 0 && (
         <div className="space-y-3">
-          <h3 className="font-medium">Módulos Adicionales</h3>
+          <h3 className="font-medium">Additional Modules</h3>
           <p className="text-sm text-muted-foreground">
-            Funcionalidades opcionales según las necesidades del comercio
+            Optional features based on tenant needs
           </p>
           <div className="grid gap-3">
             {optionalModules.map((module) => (
@@ -151,8 +151,8 @@ export const ModulesStep = ({ selectedModules, setSelectedModules }: ModulesStep
 
       <div className="bg-accent/50 p-4 rounded-lg">
         <p className="text-sm font-medium">
-          {selectedModules.length} módulo{selectedModules.length !== 1 ? "s" : ""}{" "}
-          seleccionado{selectedModules.length !== 1 ? "s" : ""}
+          {selectedModules.length} module{selectedModules.length !== 1 ? "s" : ""}{" "}
+          selected
         </p>
       </div>
     </div>

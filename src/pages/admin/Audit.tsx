@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/select";
 import { Search, Filter, FileText, User, Calendar } from "lucide-react";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
 
 interface AuditLog {
   id: string;
@@ -81,14 +80,14 @@ const Audit = () => {
 
   const getActionLabel = (action: string) => {
     const labels: Record<string, string> = {
-      TENANT_CREATED: "Comercio Creado",
-      TENANT_UPDATED: "Comercio Actualizado",
-      TENANT_DELETED: "Comercio Eliminado",
-      USER_INVITED: "Usuario Invitado",
-      USER_REMOVED: "Usuario Removido",
-      MODULE_ACTIVATED: "Módulo Activado",
-      MODULE_DEACTIVATED: "Módulo Desactivado",
-      DEMO_DATA_CREATED: "Datos Demo Creados",
+      TENANT_CREATED: "Tenant Created",
+      TENANT_UPDATED: "Tenant Updated",
+      TENANT_DELETED: "Tenant Deleted",
+      USER_INVITED: "User Invited",
+      USER_REMOVED: "User Removed",
+      MODULE_ACTIVATED: "Module Activated",
+      MODULE_DEACTIVATED: "Module Deactivated",
+      DEMO_DATA_CREATED: "Demo Data Created",
     };
     return labels[action] || action;
   };
@@ -114,7 +113,7 @@ const Audit = () => {
       <div className="flex items-center justify-center min-h-[500px]">
         <div className="text-center">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
-          <p className="text-sm text-muted-foreground">Cargando registros de auditoría...</p>
+          <p className="text-sm text-muted-foreground">Loading audit logs...</p>
         </div>
       </div>
     );
@@ -124,9 +123,9 @@ const Audit = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Auditoría</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Audit</h1>
         <p className="text-muted-foreground">
-          Registro de cambios y actividad del sistema (últimos 100 eventos)
+          System changes and activity log (last 100 events)
         </p>
       </div>
 
@@ -165,7 +164,7 @@ const Audit = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Buscar por acción, entidad o usuario..."
+            placeholder="Search by action, entity or user..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -211,8 +210,8 @@ const Audit = () => {
             {filteredLogs.length === 0 ? (
               <p className="text-center text-muted-foreground py-8">
                 {searchTerm || actionFilter !== "all" || entityFilter !== "all"
-                  ? "No se encontraron eventos con los filtros aplicados"
-                  : "No hay eventos de auditoría registrados"}
+                  ? "No events found with the applied filters"
+                  : "No audit events registered"}
               </p>
             ) : (
               filteredLogs.map((log) => (
@@ -247,7 +246,7 @@ const Audit = () => {
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
-                          {format(new Date(log.created_at), "d MMM yyyy 'a las' HH:mm", { locale: es })}
+                          {format(new Date(log.created_at), "MMM d, yyyy 'at' HH:mm")}
                         </span>
                         {log.actor_user_id && (
                           <>

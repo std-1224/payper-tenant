@@ -8,7 +8,6 @@ import { ArrowLeft, Building2, Mail, MapPin, Package, Users, Phone, Edit, Pause,
 import { StatusBadge } from "@/components/StatusBadge";
 import { ModuleChip } from "@/components/ModuleChip";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
 import { TenantUsers } from "@/components/tenant-detail/TenantUsers";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -174,14 +173,14 @@ const TenantDetail = () => {
       });
 
       toast.success(
-        newStatus === "suspended" 
-          ? "Comercio pausado exitosamente" 
-          : "Comercio activado exitosamente"
+        newStatus === "suspended"
+          ? "Tenant paused successfully"
+          : "Tenant activated successfully"
       );
       fetchTenantDetail();
     } catch (error: any) {
       console.error("Error toggling tenant status:", error);
-      toast.error("Error al cambiar el estado del comercio");
+      toast.error("Error changing tenant status");
     } finally {
       setActionLoading(false);
     }
@@ -213,11 +212,11 @@ const TenantDetail = () => {
         p_before_data: beforeData,
       });
 
-      toast.success("Comercio eliminado exitosamente");
+      toast.success("Tenant deleted successfully");
       navigate("/admin/tenants");
     } catch (error: any) {
       console.error("Error deleting tenant:", error);
-      toast.error("Error al eliminar el comercio");
+      toast.error("Error deleting tenant");
     } finally {
       setActionLoading(false);
       setShowDeleteDialog(false);
@@ -271,12 +270,12 @@ const TenantDetail = () => {
         p_after_data: editForm,
       });
 
-      toast.success("Comercio actualizado exitosamente");
+      toast.success("Tenant updated successfully");
       setShowEditDialog(false);
       fetchTenantDetail();
     } catch (error: any) {
       console.error("Error updating tenant:", error);
-      toast.error("Error al actualizar el comercio");
+      toast.error("Error updating tenant");
     } finally {
       setActionLoading(false);
     }
@@ -287,7 +286,7 @@ const TenantDetail = () => {
       <div className="flex items-center justify-center min-h-[500px]">
         <div className="text-center">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
-          <p className="text-sm text-muted-foreground">Cargando comercio...</p>
+          <p className="text-sm text-muted-foreground">Loading tenant...</p>
         </div>
       </div>
     );
@@ -296,9 +295,9 @@ const TenantDetail = () => {
   if (!tenant) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Comercio no encontrado</p>
+        <p className="text-muted-foreground">Tenant not found</p>
         <Button onClick={() => navigate("/admin/tenants")} className="mt-4">
-          Volver a Comercios
+          Back to Tenants
         </Button>
       </div>
     );
@@ -318,7 +317,7 @@ const TenantDetail = () => {
               <StatusBadge status={tenant.status as any} />
             </div>
             <p className="text-muted-foreground mt-1">
-              {tenant.slug} • Creado {format(new Date(tenant.created_at), "d 'de' MMMM 'de' yyyy", { locale: es })}
+              {tenant.slug} • Created {format(new Date(tenant.created_at), "MMMM d, yyyy")}
             </p>
           </div>
         </div>
@@ -331,7 +330,7 @@ const TenantDetail = () => {
             disabled={actionLoading}
           >
             <Edit className="h-4 w-4 mr-2" />
-            Editar
+            Edit
           </Button>
           <Button
             variant="outline"
@@ -358,7 +357,7 @@ const TenantDetail = () => {
             disabled={actionLoading}
           >
             <Trash2 className="h-4 w-4 mr-2" />
-            Eliminar
+            Delete
           </Button>
         </div>
       </div>
@@ -372,7 +371,7 @@ const TenantDetail = () => {
                 <Package className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Módulos</p>
+                <p className="text-sm text-muted-foreground">Modules</p>
                 <p className="text-2xl font-bold">{tenant.modules.filter(m => m.enabled).length}</p>
               </div>
             </div>
@@ -386,7 +385,7 @@ const TenantDetail = () => {
                 <Mail className="h-5 w-5 text-success" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Contactos</p>
+                <p className="text-sm text-muted-foreground">Contacts</p>
                 <p className="text-2xl font-bold">{tenant.contacts.length}</p>
               </div>
             </div>
@@ -400,7 +399,7 @@ const TenantDetail = () => {
                 <MapPin className="h-5 w-5 text-warning" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Locaciones</p>
+                <p className="text-sm text-muted-foreground">Locations</p>
                 <p className="text-2xl font-bold">{tenant.locations.length}</p>
               </div>
             </div>
@@ -414,7 +413,7 @@ const TenantDetail = () => {
                 <Users className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Usuarios</p>
+                <p className="text-sm text-muted-foreground">Users</p>
                 <p className="text-2xl font-bold">-</p>
               </div>
             </div>
@@ -425,11 +424,11 @@ const TenantDetail = () => {
       {/* Tabs */}
       <Tabs defaultValue="info" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="info">Información</TabsTrigger>
-          <TabsTrigger value="contacts">Contactos</TabsTrigger>
-          <TabsTrigger value="modules">Módulos</TabsTrigger>
-          <TabsTrigger value="users">Usuarios</TabsTrigger>
-          <TabsTrigger value="locations">Locaciones</TabsTrigger>
+          <TabsTrigger value="info">Information</TabsTrigger>
+          <TabsTrigger value="contacts">Contacts</TabsTrigger>
+          <TabsTrigger value="modules">Modules</TabsTrigger>
+          <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="locations">Locations</TabsTrigger>
         </TabsList>
 
         {/* Info Tab */}
@@ -438,7 +437,7 @@ const TenantDetail = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Building2 className="h-5 w-5" />
-                Información General
+                General Information
               </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 sm:grid-cols-2">
@@ -480,12 +479,12 @@ const TenantDetail = () => {
         <TabsContent value="contacts" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Contactos del Comercio</CardTitle>
+              <CardTitle>Tenant Contacts</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {tenant.contacts.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-8">No hay contactos registrados</p>
+                  <p className="text-center text-muted-foreground py-8">No contacts registered</p>
                 ) : (
                   tenant.contacts.map((contact) => (
                     <div
@@ -529,12 +528,12 @@ const TenantDetail = () => {
         <TabsContent value="modules" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Módulos Activos</CardTitle>
+              <CardTitle>Active Modules</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {tenant.modules.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-8">No hay módulos asignados</p>
+                  <p className="text-center text-muted-foreground py-8">No modules assigned</p>
                 ) : (
                   tenant.modules.map((module) => (
                     <div
@@ -547,7 +546,7 @@ const TenantDetail = () => {
                           <p className="font-medium">{module.app.name}</p>
                           {module.activated_at && (
                             <p className="text-sm text-muted-foreground">
-                              Activado {format(new Date(module.activated_at), "d MMM yyyy", { locale: es })}
+                              Activated {format(new Date(module.activated_at), "MMM d, yyyy")}
                             </p>
                           )}
                         </div>
@@ -555,11 +554,11 @@ const TenantDetail = () => {
                       <div>
                         {module.enabled ? (
                           <span className="text-xs bg-success/10 text-success px-2 py-1 rounded">
-                            Activo
+                            Active
                           </span>
                         ) : (
                           <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded">
-                            Desactivado
+                            Disabled
                           </span>
                         )}
                       </div>
@@ -580,12 +579,12 @@ const TenantDetail = () => {
         <TabsContent value="locations" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Locaciones</CardTitle>
+              <CardTitle>Locations</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {tenant.locations.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-8">No hay locaciones registradas</p>
+                  <p className="text-center text-muted-foreground py-8">No locations registered</p>
                 ) : (
                   tenant.locations.map((location) => (
                     <div
@@ -625,20 +624,20 @@ const TenantDetail = () => {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción no se puede deshacer. Se eliminará permanentemente el comercio{" "}
-              <strong>{tenant.name}</strong> y todos sus datos asociados (contactos, módulos, locaciones, usuarios).
+              This action cannot be undone. This will permanently delete the tenant{" "}
+              <strong>{tenant.name}</strong> and all associated data (contacts, modules, locations, users).
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={actionLoading}>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel disabled={actionLoading}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               disabled={actionLoading}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {actionLoading ? "Eliminando..." : "Eliminar"}
+              {actionLoading ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -648,9 +647,9 @@ const TenantDetail = () => {
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Editar Comercio</DialogTitle>
+            <DialogTitle>Edit Tenant</DialogTitle>
             <DialogDescription>
-              Modifica la información del comercio {tenant.name}
+              Modify the information for tenant {tenant.name}
             </DialogDescription>
           </DialogHeader>
           
@@ -711,10 +710,10 @@ const TenantDetail = () => {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowEditDialog(false)} disabled={actionLoading}>
-              Cancelar
+              Cancel
             </Button>
             <Button onClick={handleEdit} disabled={actionLoading || !editForm.name}>
-              {actionLoading ? "Guardando..." : "Guardar Cambios"}
+              {actionLoading ? "Saving..." : "Save Changes"}
             </Button>
           </DialogFooter>
         </DialogContent>

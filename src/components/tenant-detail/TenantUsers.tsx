@@ -22,7 +22,6 @@ import {
 import { Plus, Trash2, Pencil, Pause, Play } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
 
 interface TenantUser {
   id: string;
@@ -65,7 +64,7 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
       setUsers(data || []);
     } catch (error: any) {
       console.error("Error fetching users:", error);
-      toast.error("Error al cargar usuarios");
+      toast.error("Error loading users");
     } finally {
       setLoading(false);
     }
@@ -73,7 +72,7 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
 
   const handleInviteUser = async () => {
     if (!inviteEmail) {
-      toast.error("El email es requerido");
+      toast.error("Email is required");
       return;
     }
 
@@ -92,21 +91,21 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
 
       if (insertError) throw insertError;
 
-      toast.success(`Invitación enviada a ${inviteEmail}`);
+      toast.success(`Invitation sent to ${inviteEmail}`);
       setShowInviteDialog(false);
       setInviteEmail("");
       setInviteRole("tenant_user");
       fetchUsers();
     } catch (error: any) {
       console.error("Error inviting user:", error);
-      toast.error(error.message || "Error al invitar usuario");
+      toast.error(error.message || "Error inviting user");
     } finally {
       setInviting(false);
     }
   };
 
   const handleRemoveUser = async (userId: string) => {
-    if (!confirm("¿Estás seguro de querer eliminar este usuario?")) return;
+    if (!confirm("Are you sure you want to remove this user?")) return;
 
     try {
       const { error } = await supabase
@@ -116,11 +115,11 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
 
       if (error) throw error;
 
-      toast.success("Usuario eliminado");
+      toast.success("User removed");
       fetchUsers();
     } catch (error: any) {
       console.error("Error removing user:", error);
-      toast.error("Error al eliminar usuario");
+      toast.error("Error removing user");
     }
   };
 
@@ -135,11 +134,11 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
 
       if (error) throw error;
 
-      toast.success(newStatus === "active" ? "Usuario activado" : "Usuario pausado");
+      toast.success(newStatus === "active" ? "User activated" : "User paused");
       fetchUsers();
     } catch (error: any) {
       console.error("Error toggling user status:", error);
-      toast.error("Error al cambiar estado del usuario");
+      toast.error("Error changing user status");
     }
   };
 
@@ -159,31 +158,31 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
 
       if (error) throw error;
 
-      toast.success("Usuario actualizado");
+      toast.success("User updated");
       setShowEditDialog(false);
       setEditingUser(null);
       fetchUsers();
     } catch (error: any) {
       console.error("Error updating user:", error);
-      toast.error("Error al actualizar usuario");
+      toast.error("Error updating user");
     }
   };
 
   const getRoleLabel = (role: string) => {
     const labels: Record<string, string> = {
-      tenant_owner: "Propietario",
-      tenant_admin: "Administrador",
+      tenant_owner: "Owner",
+      tenant_admin: "Administrator",
       tenant_manager: "Manager",
-      tenant_user: "Usuario",
+      tenant_user: "User",
     };
     return labels[role] || role;
   };
 
   const getStatusBadge = (status: string) => {
     const config: Record<string, { label: string; className: string }> = {
-      active: { label: "Activo", className: "bg-success/10 text-success" },
-      invited: { label: "Invitado", className: "bg-warning/10 text-warning" },
-      disabled: { label: "Deshabilitado", className: "bg-muted text-muted-foreground" },
+      active: { label: "Active", className: "bg-success/10 text-success" },
+      invited: { label: "Invited", className: "bg-warning/10 text-warning" },
+      disabled: { label: "Disabled", className: "bg-muted text-muted-foreground" },
     };
     const { label, className } = config[status] || config.invited;
     return (
@@ -199,7 +198,7 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
         <CardContent className="py-16">
           <div className="text-center">
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto mb-3"></div>
-            <p className="text-xs text-muted-foreground">Cargando usuarios...</p>
+            <p className="text-xs text-muted-foreground">Loading users...</p>
           </div>
         </CardContent>
       </Card>
@@ -210,17 +209,17 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
     <>
       <Card className="border-border/40 shadow-none">
         <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <CardTitle className="text-base font-medium">Usuarios del Comercio</CardTitle>
+          <CardTitle className="text-base font-medium">Tenant Users</CardTitle>
           <Button onClick={() => setShowInviteDialog(true)} size="sm" className="h-8 text-xs">
             <Plus className="h-3.5 w-3.5 mr-1.5" />
-            Agregar Usuario
+            Add User
           </Button>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {users.length === 0 ? (
               <p className="text-center text-muted-foreground/70 py-12 text-sm">
-                No hay usuarios asignados
+                No users assigned
               </p>
             ) : (
               users.map((user) => (
@@ -237,7 +236,7 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
                       <span>{getRoleLabel(user.role)}</span>
                       <span>•</span>
                       <span>
-                        {format(new Date(user.created_at), "d MMM yyyy", { locale: es })}
+                        {format(new Date(user.created_at), "MMM d, yyyy")}
                       </span>
                     </div>
                   </div>
@@ -282,9 +281,9 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-base">Agregar Usuario</DialogTitle>
+            <DialogTitle className="text-base">Add User</DialogTitle>
             <DialogDescription className="text-xs">
-              Invita a un nuevo usuario a este comercio.
+              Invite a new user to this tenant.
             </DialogDescription>
           </DialogHeader>
 
@@ -294,7 +293,7 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
               <Input
                 id="email"
                 type="email"
-                placeholder="usuario@ejemplo.com"
+                placeholder="user@example.com"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
                 className="h-9"
@@ -302,16 +301,16 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="role" className="text-xs">Rol</Label>
+              <Label htmlFor="role" className="text-xs">Role</Label>
               <Select value={inviteRole} onValueChange={setInviteRole}>
                 <SelectTrigger className="h-9">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="tenant_owner">Propietario</SelectItem>
-                  <SelectItem value="tenant_admin">Administrador</SelectItem>
+                  <SelectItem value="tenant_owner">Owner</SelectItem>
+                  <SelectItem value="tenant_admin">Administrator</SelectItem>
                   <SelectItem value="tenant_manager">Manager</SelectItem>
-                  <SelectItem value="tenant_user">Usuario</SelectItem>
+                  <SelectItem value="tenant_user">User</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -319,10 +318,10 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowInviteDialog(false)} className="h-9 text-xs">
-              Cancelar
+              Cancel
             </Button>
             <Button onClick={handleInviteUser} disabled={inviting} className="h-9 text-xs">
-              {inviting ? "Agregando..." : "Agregar"}
+              {inviting ? "Adding..." : "Add"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -332,9 +331,9 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-base">Editar Usuario</DialogTitle>
+            <DialogTitle className="text-base">Edit User</DialogTitle>
             <DialogDescription className="text-xs">
-              Modifica el rol del usuario.
+              Modify the user's role.
             </DialogDescription>
           </DialogHeader>
 
@@ -350,7 +349,7 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="edit-role" className="text-xs">Rol</Label>
+                <Label htmlFor="edit-role" className="text-xs">Role</Label>
                 <Select
                   value={editingUser.role}
                   onValueChange={(value) => setEditingUser({ ...editingUser, role: value })}
@@ -359,10 +358,10 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="tenant_owner">Propietario</SelectItem>
-                    <SelectItem value="tenant_admin">Administrador</SelectItem>
+                    <SelectItem value="tenant_owner">Owner</SelectItem>
+                    <SelectItem value="tenant_admin">Administrator</SelectItem>
                     <SelectItem value="tenant_manager">Manager</SelectItem>
-                    <SelectItem value="tenant_user">Usuario</SelectItem>
+                    <SelectItem value="tenant_user">User</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -371,10 +370,10 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowEditDialog(false)} className="h-9 text-xs">
-              Cancelar
+              Cancel
             </Button>
             <Button onClick={handleUpdateUser} className="h-9 text-xs">
-              Guardar Cambios
+              Save Changes
             </Button>
           </DialogFooter>
         </DialogContent>

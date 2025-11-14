@@ -25,10 +25,10 @@ interface Contact extends ContactFormData {
 }
 
 const STEPS = [
-  { id: 1, title: "Datos Básicos" },
-  { id: 2, title: "Contactos" },
-  { id: 3, title: "Módulos" },
-  { id: 4, title: "Invitar Usuario" },
+  { id: 1, title: "Basic Info" },
+  { id: 2, title: "Contacts" },
+  { id: 3, title: "Modules" },
+  { id: 4, title: "Invite User" },
 ];
 
 const CreateTenant = () => {
@@ -85,7 +85,7 @@ const CreateTenant = () => {
         .maybeSingle();
 
       if (existingTenant) {
-        toast.error("El slug ya está en uso. Por favor elige otro.");
+        toast.error("This slug is already in use. Please choose another one.");
         setCurrentStep(1);
         return;
       }
@@ -139,11 +139,11 @@ const CreateTenant = () => {
 
       // 5. Invite user (if provided)
       if (inviteData?.email) {
-        // Note: En producción, aquí se enviaría un email de invitación
-        // Por ahora solo creamos el registro con status 'invited'
+        // Note: In production, this would send an email invitation
+        // For now we just create the record with status 'invited'
         const { error: userError } = await supabase.from("tenant_users").insert({
           tenant_id: tenant.id,
-          user_id: user!.id, // Temporal - en producción se asignaría al aceptar la invitación
+          user_id: user!.id, // Temporary - in production this would be assigned when accepting the invitation
           role: inviteData.role as any,
           status: "invited",
         });
@@ -168,11 +168,11 @@ const CreateTenant = () => {
         },
       });
 
-      toast.success("Comercio creado exitosamente");
+      toast.success("Tenant created successfully");
       navigate(`/admin/tenants/${tenant.id}`);
     } catch (error: any) {
       console.error("Error creating tenant:", error);
-      toast.error(error.message || "Error al crear el comercio");
+      toast.error(error.message || "Error creating tenant");
     } finally {
       setIsSubmitting(false);
     }
@@ -187,9 +187,9 @@ const CreateTenant = () => {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Crear Nuevo Comercio</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Create New Tenant</h1>
           <p className="text-muted-foreground">
-            Paso {currentStep} de {STEPS.length}: {STEPS[currentStep - 1].title}
+            Step {currentStep} of {STEPS.length}: {STEPS[currentStep - 1].title}
           </p>
         </div>
       </div>
@@ -240,22 +240,22 @@ const CreateTenant = () => {
           disabled={currentStep === 1 || isSubmitting}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Anterior
+          Previous
         </Button>
 
         {currentStep < STEPS.length ? (
           <Button onClick={nextStep} disabled={isSubmitting}>
-            Siguiente
+            Next
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
         ) : (
           <Button onClick={onSubmit} disabled={isSubmitting}>
             {isSubmitting ? (
-              "Creando..."
+              "Creating..."
             ) : (
               <>
                 <Check className="h-4 w-4 mr-2" />
-                Crear Comercio
+                Create Tenant
               </>
             )}
           </Button>

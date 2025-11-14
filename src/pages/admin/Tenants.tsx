@@ -8,7 +8,6 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { ModuleChip } from "@/components/ModuleChip";
 import { Plus, Search } from "lucide-react";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
 
 interface Tenant {
   id: string;
@@ -80,7 +79,7 @@ const Tenants = () => {
       <div className="flex items-center justify-center min-h-[500px]">
         <div className="text-center">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
-          <p className="text-sm text-muted-foreground">Cargando lista de comercios...</p>
+          <p className="text-sm text-muted-foreground">Loading tenant list...</p>
         </div>
       </div>
     );
@@ -90,12 +89,12 @@ const Tenants = () => {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Comercios</h1>
-          <p className="text-muted-foreground">Gestiona todos los clientes de Payper</p>
+          <h1 className="text-3xl font-bold tracking-tight">Tenants</h1>
+          <p className="text-muted-foreground">Manage all Payper clients</p>
         </div>
         <Button onClick={() => navigate("/admin/tenants/new")} className="w-full sm:w-auto">
           <Plus className="h-4 w-4 mr-2" />
-          Nuevo Comercio
+          New Tenant
         </Button>
       </div>
 
@@ -103,7 +102,7 @@ const Tenants = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Buscar por nombre..."
+            placeholder="Search by name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -113,13 +112,13 @@ const Tenants = () => {
 
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle>Listado de Comercios</CardTitle>
+          <CardTitle>Tenant List</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {filteredTenants.length === 0 ? (
               <p className="text-center text-muted-foreground py-8">
-                {searchTerm ? "No se encontraron comercios" : "No hay comercios registrados aún"}
+                {searchTerm ? "No tenants found" : "No tenants registered yet"}
               </p>
             ) : (
               filteredTenants.map((tenant) => (
@@ -145,7 +144,7 @@ const Tenants = () => {
                     </div>
                   </div>
                   <div className="text-sm text-muted-foreground sm:ml-4 shrink-0">
-                    {format(new Date(tenant.created_at), "d MMM yyyy", { locale: es })}
+                    {format(new Date(tenant.created_at), "MMM d, yyyy")}
                   </div>
                 </div>
               ))

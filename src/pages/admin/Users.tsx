@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/select";
 import { Search, UserPlus, Mail, Building2 } from "lucide-react";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
 import { StatusBadge } from "@/components/StatusBadge";
 
 interface UserWithTenant {
@@ -126,7 +125,7 @@ const Users = () => {
       <div className="flex items-center justify-center min-h-[500px]">
         <div className="text-center">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
-          <p className="text-sm text-muted-foreground">Cargando usuarios...</p>
+          <p className="text-sm text-muted-foreground">Loading users...</p>
         </div>
       </div>
     );
@@ -136,8 +135,8 @@ const Users = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Usuarios</h1>
-        <p className="text-muted-foreground">Gestión de usuarios por comercio</p>
+        <h1 className="text-3xl font-bold tracking-tight">Users</h1>
+        <p className="text-muted-foreground">User management by tenant</p>
       </div>
 
       {/* Stats */}
@@ -145,7 +144,7 @@ const Users = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Total Usuarios</p>
+              <p className="text-sm text-muted-foreground">Total Users</p>
               <p className="text-2xl font-bold">{stats.total}</p>
             </div>
           </CardContent>
@@ -154,7 +153,7 @@ const Users = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Activos</p>
+              <p className="text-sm text-muted-foreground">Active</p>
               <p className="text-2xl font-bold text-success">{stats.active}</p>
             </div>
           </CardContent>
@@ -163,7 +162,7 @@ const Users = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Invitados</p>
+              <p className="text-sm text-muted-foreground">Invited</p>
               <p className="text-2xl font-bold text-warning">{stats.invited}</p>
             </div>
           </CardContent>
@@ -172,7 +171,7 @@ const Users = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Deshabilitados</p>
+              <p className="text-sm text-muted-foreground">Disabled</p>
               <p className="text-2xl font-bold text-muted-foreground">{stats.disabled}</p>
             </div>
           </CardContent>
@@ -184,7 +183,7 @@ const Users = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Buscar por comercio o ID de usuario..."
+            placeholder="Search by tenant or user ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -196,10 +195,10 @@ const Users = () => {
             <SelectValue placeholder="Estado" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos los estados</SelectItem>
-            <SelectItem value="active">Activos</SelectItem>
-            <SelectItem value="invited">Invitados</SelectItem>
-            <SelectItem value="disabled">Deshabilitados</SelectItem>
+            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="invited">Invited</SelectItem>
+            <SelectItem value="disabled">Disabled</SelectItem>
           </SelectContent>
         </Select>
 
@@ -220,15 +219,15 @@ const Users = () => {
       {/* Users List */}
       <Card>
         <CardHeader>
-          <CardTitle>Lista de Usuarios ({filteredUsers.length})</CardTitle>
+          <CardTitle>User List ({filteredUsers.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {filteredUsers.length === 0 ? (
               <p className="text-center text-muted-foreground py-8">
                 {searchTerm || statusFilter !== "all" || roleFilter !== "all"
-                  ? "No se encontraron usuarios con los filtros aplicados"
-                  : "No hay usuarios registrados aún"}
+                  ? "No users found with the applied filters"
+                  : "No users registered yet"}
               </p>
             ) : (
               filteredUsers.map((user) => (
@@ -250,11 +249,11 @@ const Users = () => {
                       <span className="text-xs">({user.tenant.slug})</span>
                     </div>
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <span>Agregado {format(new Date(user.created_at), "d MMM yyyy", { locale: es })}</span>
+                      <span>Added {format(new Date(user.created_at), "MMM d, yyyy")}</span>
                       {user.last_login_at && (
                         <>
                           <span>•</span>
-                          <span>Último acceso {format(new Date(user.last_login_at), "d MMM yyyy", { locale: es })}</span>
+                          <span>Last login {format(new Date(user.last_login_at), "MMM d, yyyy")}</span>
                         </>
                       )}
                     </div>

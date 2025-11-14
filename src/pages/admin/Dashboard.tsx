@@ -5,7 +5,6 @@ import { Building2, Users, Package, TrendingUp } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ModuleChip } from "@/components/ModuleChip";
 import { format, subDays, startOfDay } from "date-fns";
-import { es } from "date-fns/locale";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface DashboardStats {
@@ -27,7 +26,7 @@ interface RecentTenant {
 
 interface UserGrowthData {
   date: string;
-  usuarios: number;
+  users: number;
 }
 
 const Dashboard = () => {
@@ -113,7 +112,7 @@ const Dashboard = () => {
       // Group by date
       const growthMap = new Map<string, number>();
       usersData?.forEach((user) => {
-        const dateKey = format(new Date(user.created_at), "dd MMM", { locale: es });
+        const dateKey = format(new Date(user.created_at), "MMM dd");
         growthMap.set(dateKey, (growthMap.get(dateKey) || 0) + 1);
       });
 
@@ -121,10 +120,10 @@ const Dashboard = () => {
       const growthArray: UserGrowthData[] = [];
       for (let i = 29; i >= 0; i--) {
         const date = subDays(new Date(), i);
-        const dateKey = format(date, "dd MMM", { locale: es });
+        const dateKey = format(date, "MMM dd");
         growthArray.push({
           date: dateKey,
-          usuarios: growthMap.get(dateKey) || 0,
+          users: growthMap.get(dateKey) || 0,
         });
       }
 
@@ -141,7 +140,7 @@ const Dashboard = () => {
       <div className="flex items-center justify-center min-h-[500px]">
         <div className="text-center">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
-          <p className="text-sm text-muted-foreground">Cargando datos del dashboard...</p>
+          <p className="text-sm text-muted-foreground">Loading dashboard data...</p>
         </div>
       </div>
     );
@@ -151,7 +150,7 @@ const Dashboard = () => {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-1">Vista general del sistema</p>
+        <p className="text-sm text-muted-foreground mt-1">System overview</p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -170,7 +169,7 @@ const Dashboard = () => {
         <Card className="border-border/40 shadow-none">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Activos</CardTitle>
+              <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Active</CardTitle>
               <TrendingUp className="h-4 w-4 text-success/60" />
             </div>
           </CardHeader>
@@ -206,7 +205,7 @@ const Dashboard = () => {
         <Card className="border-border/40 shadow-none">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Suspendidos</CardTitle>
+              <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Suspended</CardTitle>
               <Users className="h-4 w-4 text-destructive/60" />
             </div>
           </CardHeader>
@@ -218,8 +217,8 @@ const Dashboard = () => {
 
       <Card className="border-border/40 shadow-none">
         <CardHeader>
-          <CardTitle className="text-base font-medium">Crecimiento de Usuarios</CardTitle>
-          <p className="text-xs text-muted-foreground">Registros en los últimos 30 días</p>
+          <CardTitle className="text-base font-medium">User Growth</CardTitle>
+          <p className="text-xs text-muted-foreground">Registrations in the last 30 days</p>
         </CardHeader>
         <CardContent>
           <div className="h-[280px] w-full">
@@ -247,7 +246,7 @@ const Dashboard = () => {
                 />
                 <Line
                   type="monotone"
-                  dataKey="usuarios"
+                  dataKey="users"
                   stroke="hsl(var(--primary))"
                   strokeWidth={2}
                   dot={{ fill: "hsl(var(--primary))", r: 3 }}
@@ -261,13 +260,13 @@ const Dashboard = () => {
 
       <Card className="border-border/40 shadow-none">
         <CardHeader>
-          <CardTitle className="text-base font-medium">Comercios Recientes</CardTitle>
+          <CardTitle className="text-base font-medium">Recent Tenants</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {recentTenants.length === 0 ? (
               <p className="text-center text-muted-foreground/70 py-12 text-sm">
-                No hay comercios registrados aún
+                No tenants registered yet
               </p>
             ) : (
               recentTenants.map((tenant) => (
@@ -298,7 +297,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                   <div className="text-xs text-muted-foreground sm:ml-4 shrink-0">
-                    {format(new Date(tenant.created_at), "d MMM yyyy", { locale: es })}
+                    {format(new Date(tenant.created_at), "MMM d, yyyy")}
                   </div>
                 </div>
               ))
