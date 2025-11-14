@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { User, Session } from "@supabase/supabase-js";
+import { User, Session, AuthError } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
@@ -15,8 +15,8 @@ interface AuthContextType {
   session: Session | null;
   globalAdmin: GlobalAdmin | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+  signUp: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -59,8 +59,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .maybeSingle();
 
     if (error) {
-      // Helpful for debugging RLS/permissions issues
       console.error('Error fetching global_admins:', error);
+    }
+
+    // If no global_admin record found, try to create one automatically
+    if (!data && !role) {
+      console.log('No global_admin record found, attempting auto-creation...');
+      try {
+        const { error: createError } = await supabase.rpc('register_as_super_admin');
+        if (!createError) {
+          console.log('✅ Auto-created super_admin record');
+          // Retry fetching the role
+          const { data: retryRole } = await supabase.rpc('current_global_role');
+          if (retryRole) {
+            const ga: GlobalAdmin = {
+              id: 'by-function',
+              user_id: userId,
+              role: retryRole as GlobalAdmin['role'],
+              is_active: true,
+            };
+            setGlobalAdmin(ga);
+            return ga;
+          }
+        } else {
+          console.error('Failed to auto-create admin:', createError);
+        }
+      } catch (err) {
+        console.error('Exception during auto-creation:', err);
+      }
     }
 
     setGlobalAdmin(data);
@@ -70,7 +96,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
 
@@ -113,14 +139,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signUp = async (email: string, password: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    const { error } = await supabase.auth.signUp({
+    const redirectUrl = `${window.location.origin}/admin/dashboard`;
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: redirectUrl,
       },
     });
+
+    // If signup successful, automatically register user as super_admin
+    if (!error && data.user && data.session) {
+      // Wait a moment for the session to be fully established
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      try {
+        // Call the database function to add user to global_admins
+        const { error: adminError } = await supabase.rpc('register_as_super_admin');
+
+        if (adminError) {
+          console.error('Error registering as super admin:', adminError);
+          // Try alternative method with user_id
+          const { error: altError } = await supabase.rpc('create_super_admin_for_user', {
+            user_id_param: data.user.id
+          });
+          if (altError) {
+            console.error('Alternative method also failed:', altError);
+          }
+        } else {
+          console.log('✅ User successfully registered as super_admin');
+        }
+      } catch (err) {
+        console.error('Exception registering as super admin:', err);
+      }
+    }
+
     return { error };
   };
 

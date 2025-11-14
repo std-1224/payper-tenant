@@ -39,11 +39,12 @@ const Auth = () => {
         if (error) {
           toast.error(error.message || "Error signing up");
         } else {
-          toast.success("Account created. Please verify your email.");
+          toast.success("Account created successfully! You now have super admin access.");
         }
       }
-    } catch (error: any) {
-      toast.error(error.message || "Unexpected error");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unexpected error";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

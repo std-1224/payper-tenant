@@ -806,6 +806,8 @@ export type Database = {
       is_member_of_tenant: { Args: { _tenant_id: string }; Returns: boolean }
       is_tenant_admin: { Args: { _tenant_id: string }; Returns: boolean }
       user_tenant_ids: { Args: never; Returns: string[] }
+      register_as_super_admin: { Args: never; Returns: void }
+      create_super_admin_for_user: { Args: { user_id_param: string }; Returns: void }
     }
     Enums: {
       global_admin_role:
