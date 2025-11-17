@@ -396,7 +396,7 @@ const TenantDetail = () => {
               </>
             )}
           </Button>
-          <Button
+          {/* <Button
             variant="destructive"
             size="sm"
             onClick={() => setShowDeleteDialog(true)}
@@ -404,7 +404,7 @@ const TenantDetail = () => {
           >
             <Trash2 className="h-4 w-4 mr-2" />
             Delete
-          </Button>
+          </Button> */}
         </div>
       </div>
 

@@ -203,6 +203,17 @@ CREATE POLICY "allow_superadmin_manage_apps" ON public.apps_registry
   FOR ALL USING (
     public.current_global_role() = 'super_admin'
   );
+CREATE POLICY "Allow authenticated users to read apps_registry"
+ON public.apps_registry
+FOR SELECT
+TO authenticated
+USING (true);
+
+CREATE POLICY "Allow public users to read apps_registry"
+ON public.apps_registry
+FOR SELECT
+TO anon
+USING (true);
 
 -- RLS Policies for tenant_modules
 CREATE POLICY "allow_admin_read_modules" ON public.tenant_modules
@@ -217,6 +228,18 @@ CREATE POLICY "allow_admin_manage_modules" ON public.tenant_modules
   FOR ALL USING (
     public.current_global_role() IN ('super_admin', 'sales_admin')
   );
+
+CREATE POLICY "Allow authenticated users to read tenant_modules"
+ON public.tenant_modules
+FOR SELECT
+TO authenticated
+USING (true);
+
+CREATE POLICY "Allow public users to read tenant_modules"
+ON public.tenant_modules
+FOR SELECT
+TO anon
+USING (true);
 
 -- RLS Policies for tenant_locations
 CREATE POLICY "allow_admin_read_locations" ON public.tenant_locations
