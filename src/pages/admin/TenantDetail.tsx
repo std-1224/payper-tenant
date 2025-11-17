@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
 import { ArrowLeft, Building2, Mail, MapPin, Package, Users, Phone, Edit, Pause, Play, Trash2 } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ModuleChip } from "@/components/ModuleChip";
@@ -188,7 +189,7 @@ const TenantDetail = () => {
 
   const handleDelete = async () => {
     if (!tenant) return;
-    
+
     setActionLoading(true);
     try {
       const beforeData = {
@@ -220,6 +221,51 @@ const TenantDetail = () => {
     } finally {
       setActionLoading(false);
       setShowDeleteDialog(false);
+    }
+  };
+
+  const handleToggleModule = async (moduleId: string, currentEnabled: boolean) => {
+    if (!tenant) return;
+
+    try {
+      const newEnabled = !currentEnabled;
+      const beforeData = { enabled: currentEnabled };
+      const afterData = { enabled: newEnabled };
+
+      // Update the module status
+      const { error } = await supabase
+        .from("tenant_modules")
+        .update({
+          enabled: newEnabled,
+          ...(newEnabled
+            ? { activated_at: new Date().toISOString(), deactivated_at: null }
+            : { deactivated_at: new Date().toISOString() }
+          ),
+        })
+        .eq("id", moduleId);
+
+      if (error) throw error;
+
+      // Log the action
+      await supabase.rpc("insert_audit_log", {
+        p_action: newEnabled ? "MODULE_ENABLED" : "MODULE_DISABLED",
+        p_entity_type: "tenant_module",
+        p_entity_id: moduleId,
+        p_before_data: beforeData,
+        p_after_data: afterData,
+      });
+
+      toast.success(
+        newEnabled
+          ? "Module enabled successfully"
+          : "Module disabled successfully"
+      );
+
+      // Refresh tenant data
+      fetchTenantDetail();
+    } catch (error: any) {
+      console.error("Error toggling module:", error);
+      toast.error("Error changing module status");
     }
   };
 
@@ -528,7 +574,10 @@ const TenantDetail = () => {
         <TabsContent value="modules" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Active Modules</CardTitle>
+              <CardTitle>Modules</CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                Manage which modules are enabled for this tenant
+              </p>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -538,29 +587,44 @@ const TenantDetail = () => {
                   tenant.modules.map((module) => (
                     <div
                       key={module.id}
-                      className="flex items-center justify-between p-4 border rounded-lg"
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 flex-1">
                         <ModuleChip name={module.app.name} isCore={module.app.is_core} />
-                        <div>
+                        <div className="flex-1">
                           <p className="font-medium">{module.app.name}</p>
-                          {module.activated_at && (
-                            <p className="text-sm text-muted-foreground">
-                              Activated {format(new Date(module.activated_at), "MMM d, yyyy")}
-                            </p>
-                          )}
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                            {module.activated_at && (
+                              <span>
+                                Activated {format(new Date(module.activated_at), "MMM d, yyyy")}
+                              </span>
+                            )}
+                            {module.enabled ? (
+                              <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded">
+                                Active
+                              </span>
+                            ) : (
+                              <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded">
+                                Disabled
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
-                      <div>
-                        {module.enabled ? (
-                          <span className="text-xs bg-success/10 text-success px-2 py-1 rounded">
-                            Active
-                          </span>
-                        ) : (
-                          <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded">
-                            Disabled
-                          </span>
-                        )}
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
+                          <Label
+                            htmlFor={`module-${module.id}`}
+                            className="text-sm text-muted-foreground cursor-pointer"
+                          >
+                            {module.enabled ? "Enabled" : "Disabled"}
+                          </Label>
+                          <Switch
+                            id={`module-${module.id}`}
+                            checked={module.enabled}
+                            onCheckedChange={() => handleToggleModule(module.id, module.enabled)}
+                          />
+                        </div>
                       </div>
                     </div>
                   ))
